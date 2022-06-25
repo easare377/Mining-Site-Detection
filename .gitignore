@@ -130,3 +130,7 @@ dmypy.json
 
 #directories
 /data
+
+.DS_Store
+
+/.vscode
