@@ -1,9 +1,10 @@
-from PIL import Image
+from PIL import Image, ImageEnhance
 import matplotlib.pyplot as plt
 import os
 import numpy as np
 
 from PIL import ImageFile
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
@@ -23,9 +24,9 @@ def display_image(image, cmap='brg'):
 def display_images(images, labels=None, row_count=10, col_count=10, cmap='brg'):
     num = row_count * col_count
     fig, axes = plt.subplots(row_count, col_count,
-                             figsize=(1.5*row_count, 2*col_count))
+                             figsize=(1.5 * row_count, 2 * col_count))
     for i in range(len(images)):
-        ax = axes[i//row_count, i % col_count]
+        ax = axes[i // row_count, i % col_count]
         ax.imshow(images[i], cmap=cmap)
         if labels != None:
             ax.set_title('Label: {}'.format(labels[i]))
@@ -33,9 +34,28 @@ def display_images(images, labels=None, row_count=10, col_count=10, cmap='brg'):
     plt.show()
 
 
-def get_all_files(path):
-    onlyfiles = [path + '/' + f for f in os.listdir(
-        path) if os.path.isfile(os.path.join(path, f))]
+def load_images_in_dir(path, color_space):
+    images_path = get_all_files(path)
+    images = [None] * len(images_path)
+    for x in range(len(images_path)):
+        images[x] = read_image(os.path.join(
+            path, images_path[x]), color_space)
+    return images
+
+
+def create_dir_if_not_exists(path):
+    if os.path.exists(path):
+        return
+    os.makedirs(path)
+
+
+def get_all_files(path, get_full_path=False):
+    if get_full_path:
+        onlyfiles = [path + '/' + f for f in os.listdir(
+            path) if os.path.isfile(os.path.join(path, f))]
+    else:
+        onlyfiles = [f for f in os.listdir(
+            path) if os.path.isfile(os.path.join(path, f))]
     return onlyfiles
 
 
@@ -88,3 +108,9 @@ def ycbcr2rgb(im):
     np.putmask(rgb, rgb > 255, 255)
     np.putmask(rgb, rgb < 0, 0)
     return np.uint8(rgb)
+
+
+def set_image_contrast(image, factor):
+    # image brightness enhancer
+    enhancer = ImageEnhance.Contrast(image)
+    return enhancer.enhance(factor)

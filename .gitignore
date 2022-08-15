@@ -130,7 +130,10 @@ dmypy.json
 
 #directories
 /data
-
-.DS_Store
-
 /.vscode
+
+#extensions
+*.zip
+
+#files
+.DS_Store
